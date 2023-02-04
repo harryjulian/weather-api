@@ -1,0 +1,30 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FlaskApp</title>
+</head>
+<body>
+    <h1 style = 'font-family: Arial'>Weather API</h1>
+    <p style = 'font-family: Arial'>Welcome to this simple Weather API.<br>
+        To query the weather in a given city, input it below.</p>
+</body>
+</html>
+
+<form method="POST">
+    <input 
+        type="text" 
+        id="city"
+        name="city"
+        placeholder="City Name"
+        value = {{ request.form['city'] }}></input>
+    <button type="submit">Submit</button>
+</form>
+
+<body>
+        <table>
+            <h1>
+                {{ table|safe }}
+            </h1> 
+        </table>
+    </div>
+</body>
