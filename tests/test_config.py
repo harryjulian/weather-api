@@ -1,4 +1,4 @@
-from config import *
+from weather_app.config import *
 
 def test_key():
     assert isinstance(API_KEY, str)

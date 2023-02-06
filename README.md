@@ -18,3 +18,7 @@ Now, run the app.
 ```python app.py```
 
 Open your browser and visit ```localhost:5000``` to interact with the API.
+
+To run all unit tests:
+
+```pytest```
