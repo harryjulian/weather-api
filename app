@@ -423,3 +423,9 @@ INFO:werkzeug:127.0.0.1 - - [07/Feb/2023 14:27:43] "POST / HTTP/1.1" 200 -
 INFO:root:Attempting to retrieve weather for bournemouth.
 INFO:root:Retrieved city weather data: ['Bournemouth', 46.96, 'Few clouds', '02d'].
 INFO:werkzeug:127.0.0.1 - - [07/Feb/2023 14:27:51] "POST / HTTP/1.1" 200 -
+INFO:werkzeug:[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+INFO:werkzeug:[33mPress CTRL+C to quit[0m
+INFO:root:Attempting to retrieve weather for bournemouth.
+INFO:root:Retrieved city weather data: ['Bournemouth', 46.98, 'Few clouds', '02d'].
+INFO:werkzeug:127.0.0.1 - - [07/Feb/2023 14:46:18] "POST / HTTP/1.1" 200 -

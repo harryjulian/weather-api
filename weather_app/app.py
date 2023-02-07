@@ -10,13 +10,10 @@ logging.basicConfig(filename = 'app', level = logging.INFO)
 # Initalise & Configure
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
-app.config['COLUMNS'][1] += ' (C)' if app.config['METRIC'] else ' (F)'
+app.config['COLUMNS'][1] += f' (C{chr(176)})' if app.config['METRIC'] else f' (F{chr(176)})'
 df = pd.DataFrame(columns = app.config['COLUMNS'])
 
 longitude, latitude = (-180, 180), (-90, 90)
-
-def check_api_key():
-    pass
 
 @app.route('/', methods=['POST', 'GET'])
 def home(df: pd.DataFrame = df):
