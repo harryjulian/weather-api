@@ -15,7 +15,7 @@ Then, install the dependencies.
 
 Now, run the app.
 
-```python app.py```
+```python weather_app/app.py```
 
 Open your browser and visit ```localhost:5000``` to interact with the API.
 
