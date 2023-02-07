@@ -1,18 +1,19 @@
 import logging
-import pandas as pd
-
+import warnings
 from flask import Flask, request, render_template
 import requests
 from requests.exceptions import HTTPError, JSONDecodeError
+from .exceptions import InvalidCityException
+import pandas as pd
 
+# Configure Logging
 logging.basicConfig(filename = 'app', level = logging.INFO)
+warnings.simplefilter(action='ignore', category=FutureWarning)
 
-# Initalise & Configure
+# Configure App
 app = Flask(__name__)
 app.config.from_pyfile('config.py')
-app.config['COLUMNS'][1] += f' (C{chr(176)})' if app.config['METRIC'] else f' (F{chr(176)})'
 df = pd.DataFrame(columns = app.config['COLUMNS'])
-
 longitude, latitude = (-180, 180), (-90, 90)
 
 @app.route('/', methods=['POST', 'GET'])
@@ -23,7 +24,7 @@ def home(df: pd.DataFrame = df):
         city = request.form.get("city")
         logging.info(f"Attempting to retrieve weather for {city}.")
         geo_url = f"http://api.openweathermap.org/geo/1.0/direct?q={city},&limit={1}&appid={app.config['API_KEY']}"
-        
+
         # Send request
         try:
             geo_response = requests.get(geo_url)
@@ -32,18 +33,22 @@ def home(df: pd.DataFrame = df):
         except requests.exceptions.HTTPError as e:
             logging.exception(f"{geo_response.status_code} error whilst querying for {city}.")
             return render_template('home.html', error = f'{geo_response.status_code} error.')
-        
+
         # Unpack request
         try:
-            geo_resp = geo_response.json()[0]
-        except IndexError as e:
-            err = f"Invalid city name: '{city}'."
-            logging.exception(err)
-            return render_template('home.html', error = err)
+            geo_resp = geo_response.json()
         except JSONDecodeError as e:
             err = "Error decoding the lat/long JSON."
             logging.exception(err)
             return render_template('home.html', error = err)
+        try:
+            if len(geo_resp) == 0:
+                raise InvalidCityException
+            else:
+                geo_resp = geo_resp[0]
+        except InvalidCityException as e:
+            logging.exception(e.message)
+            return render_template('home.html', error = e.message)
 
         # Validate values for latitude & longitude
         lat, lon = geo_resp['lat'], geo_resp['lon']
@@ -51,17 +56,19 @@ def home(df: pd.DataFrame = df):
             assert lat > latitude[0] and lat < latitude[1]
             assert lon > longitude[0] and lon < longitude[1]
         except AssertionError as e:
-            logging.exception('Lat/Long values out of bounds.')
-    
+            err = 'Returned lat/long values out of bounds.'
+            logging.exception(err)
+            return render_template('home.html', error = err)
+
         # Get weather for given lat/long
         units = 'metric' if app.config['METRIC'] else 'imperial'
         weather_url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={app.config['API_KEY']}&units={units}"
-        
+
         # Send request
         try:
             weather_response = requests.get(weather_url)
             if weather_response.status_code == 401:
-                    raise HTTPError
+                raise HTTPError
         except requests.exceptions.HTTPError as e:
             logging.exception(f"{weather_response.status_code} error whilst querying for {city}.")
             return render_template('home.html', error = f'{weather_response.status_code} error.')
