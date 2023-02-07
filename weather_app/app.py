@@ -39,24 +39,26 @@ def home(df: pd.DataFrame = df):
         # Unpack request
         try:
             geo_resp = geo_response.json()[0]
-        except KeyError as e:
-            err = "The response JSON was empty."
-            logging.exception(err)
-            return render_template('home.html', error = err)
         except IndexError as e:
-            err = "The response JSON was empty."
+            err = f"Invalid city name: '{city}'."
             logging.exception(err)
             return render_template('home.html', error = err)
         except JSONDecodeError as e:
-            err = "Unable to decode the JSON."
+            err = "Error decoding the lat/long JSON."
             logging.exception(err)
             return render_template('home.html', error = err)
 
         # Validate values for latitude & longitude
+        lat, lon = geo_resp['lat'], geo_resp['lon']
+        try:
+            assert lat > latitude[0] and lat < latitude[1]
+            assert lon > longitude[0] and lon < longitude[1]
+        except AssertionError as e:
+            logging.exception('Lat/Long values out of bounds.')
     
         # Get weather for given lat/long
         units = 'metric' if app.config['METRIC'] else 'imperial'
-        weather_url = f"https://api.openweathermap.org/data/2.5/weather?lat={geo_resp['lat']}&lon={geo_resp['lon']}&appid={app.config['API_KEY']}&units={units}"
+        weather_url = f"https://api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}&appid={app.config['API_KEY']}&units={units}"
         
         # Send request
         try:
@@ -70,16 +72,8 @@ def home(df: pd.DataFrame = df):
         # Unpack request
         try:
             weather_resp = weather_response.json()
-        except KeyError as e:
-            err = "The response JSON was empty."
-            logging.exception(err)
-            return render_template('home.html', error = err)
-        except IndexError as e:
-            err = "The response JSON was empty."
-            logging.exception(err)
-            return render_template('home.html', error = err)
         except JSONDecodeError as e:
-            err = "Unable to decode the JSON."
+            err = "Error decoding the weather JSON."
             logging.exception(err)
             return render_template('home.html', error = err)
         
