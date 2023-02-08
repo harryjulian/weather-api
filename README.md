@@ -25,7 +25,7 @@ To run the app, follow these step-by-step instructions.
 https://openweathermap.org/. In ```weather_app/config.py``` paste your key into the empty ```API_KEY```
 string.
 
-5. Before we run the app lets run the test suite to ensure everything is in order. This is important, 
+5. Before we run the app let's run the test suite to ensure everything is in order. This is important, 
 as it also checks the validity of your API key.
 
 > ```$ pytest```
