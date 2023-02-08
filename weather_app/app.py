@@ -1,6 +1,6 @@
 import logging
 import warnings
-from flask import Flask, request, render_template, Markup
+from flask import Flask, request, render_template
 import requests
 from requests.exceptions import HTTPError, JSONDecodeError
 import pandas as pd
@@ -66,7 +66,7 @@ def home(df: pd.DataFrame = df):
         # Send request
         try:
             weather_response = requests.get(weather_url)
-            if weather_response.status_code == 401:
+            if weather_response.status_code != 200:
                 raise HTTPError
         except requests.exceptions.HTTPError as e:
             logging.exception(f"{weather_response.status_code} error whilst querying for {city}.")
