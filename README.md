@@ -7,18 +7,32 @@ provides a visual description of conditions.
 
 # Setup
 
-To setup the app, first intall a virtual environment.
+To run the app, follow these step-by-step instructions.
 
-Then, install the dependencies.
+1. Setup your virtual environment.
 
-```pip install -r requirements.txt```
+```$ python -m venv venv```
 
-Now, run the app.
+2. Ensure the virtual environment is activated. On MacOS, the command is:
 
-```python weather_app/app.py```
+```$ source venv/bin/activate```
 
-Open your browser and visit ```localhost:5000``` to interact with the API.
+3. Install the dependencies in your virtual environment.
 
-To run all unit tests:
+```$ pip install -r requirements.txt```
 
-```pytest```
+4. Before running the API you need to enter your own API Key, which can be obtained from
+https://openweathermap.org/. In ```weather_app/config.py``` paste your key into the empty ```API_KEY```
+string.
+
+5. Before we run the app lets run the test suite to ensure everything is in order. This is important, 
+as it also checks the validity of your API key.
+
+```$ pytest```
+
+6. Now, run the app.
+
+```$ python weather_app/app.py```
+
+7. Open your browser and enter ```localhost:5000``` in your search bar to load the API.
+Enter some city names to start exploring the weather across the globe.
