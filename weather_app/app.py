@@ -83,7 +83,7 @@ def home(df: pd.DataFrame = df):
         # Construct Object to return to API
         icon = weather_resp['weather'][0]['icon']
         city_data = [
-            city.lower().capitalize(),
+            city.lower().title(),
             weather_resp['main']['temp'],
             weather_resp['weather'][0]['description'].capitalize(),
             f'static/icons/{icon}.png'
@@ -95,7 +95,8 @@ def home(df: pd.DataFrame = df):
             table = df.to_html(
                 escape=False,
                 formatters = {'Icon': lambda s: f'<img src="{s}" width="70" height="70">'},
-                index = False
+                index = False,
+                justify = 'left'
                 )
             )
     else:
