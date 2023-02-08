@@ -11,9 +11,11 @@ def test_load(client):
 @pytest.mark.parametrize('input', cities)
 def test_cities_correct(client, input):
     resp = client.post("/", data = {'city': input})
+    assert b'401' not in resp.data
     assert b'This city name is invalid. Please try again.' not in resp.data
 
 @pytest.mark.parametrize('input', [random_string() for _ in range(15)])
 def test_cities_incorrect(client, input):
     resp = client.post("/", data = {'city': input})
+    assert b'401' not in resp.data
     assert b'This city name is invalid. Please try again.' in resp.data
