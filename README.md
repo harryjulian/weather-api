@@ -11,7 +11,7 @@ To run the app, follow these step-by-step instructions.
 
 1. Setup your virtual environment.
 
-> ```$ python -m venv venv```
+> ```$ python3 -m venv venv```
 
 2. Ensure the virtual environment is activated. On MacOS, the command is:
 
