@@ -1,9 +1,8 @@
 import logging
 import warnings
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, Markup
 import requests
 from requests.exceptions import HTTPError, JSONDecodeError
-from .exceptions import InvalidCityException
 import pandas as pd
 
 # Configure Logging
@@ -28,7 +27,7 @@ def home(df: pd.DataFrame = df):
         # Send request
         try:
             geo_response = requests.get(geo_url)
-            if geo_response.status_code == 401:
+            if geo_response.status_code != 200:
                 raise HTTPError
         except requests.exceptions.HTTPError as e:
             logging.exception(f"{geo_response.status_code} error whilst querying for {city}.")
@@ -82,17 +81,30 @@ def home(df: pd.DataFrame = df):
             return render_template('home.html', error = err)
         
         # Construct Object to return to API
+        icon = weather_resp['weather'][0]['icon']
         city_data = [
             city.lower().capitalize(),
             weather_resp['main']['temp'],
             weather_resp['weather'][0]['description'].capitalize(),
-            weather_resp['weather'][0]['icon']
+            f'static/icons/{icon}.png'
         ]
         logging.info(f'Retrieved city weather data: {city_data}.')
         df = df.append({i:j for i, j in zip(app.config['COLUMNS'], city_data)}, ignore_index = True)
-        return render_template('home.html', table = df.to_html())
+        return render_template(
+            'home.html', 
+            table = df.to_html(
+                escape=False,
+                formatters = {'Icon': lambda s: f'<img src="{s}" width="70" height="70">'},
+                index = False
+                )
+            )
     else:
         return render_template('home.html')
+
+class InvalidCityException(Exception):
+    
+    def __init__(self):
+        self.message = 'This city name is invalid. Please try again.'
 
 if __name__ == '__main__':
     app.run(port=5000, use_reloader=False, debug = app.config['DEBUG'])
